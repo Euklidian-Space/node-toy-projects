@@ -29,19 +29,6 @@ function verifyURL(req, res) {
 	});
 };
 
-// function queryUrl(connection) {
-// 	return ({ req, res }) => {
-// 		return connection
-// 			.then(db => {
-// 				return db.collection("url_list")
-// 					.find(
-// 						{ url: req.params.url },
-// 						{ _id: 1, url: 1, tiny_url: 1}
-// 					).toArray();
-// 			});
-// 	};
-// }
-
 function queryUrl(connection) {
 	return ({ req, res }) => {
 		return connection.then(db => {
@@ -54,18 +41,6 @@ function queryUrl(connection) {
 		});
 	};
 }
-
-// function queryUrl(connection) {
-// 	return ({ req, res }) => {
-// 		return Promise.resolve({
-// 			then: function (resolve) {
-// 				resolve({
-// 					docs:
-// 				})
-// 			}
-// 		})
-// 	};
-// }
 
 function parseQueryResponse({ req, res }) {
 	return ({ docs, db }) => {
