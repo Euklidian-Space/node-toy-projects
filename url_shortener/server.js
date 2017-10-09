@@ -24,12 +24,11 @@ app.get("/new/:url(*)", (req, res) => {
 });
 
 app.get("/ret/:id", (req, res) => {
-	getUrl(req)
-		.then(url => {
+  getUrl(req)
+    .then(url => {
       console.log(`redirecting to ${url}...`);
       res.redirect(301, url);
-    })
-		.catch(err => res.send(console.log(err)));
+    }).catch(err => res.send(console.log(err)));
 });
 
 const port = process.env.PORT || 5000;
