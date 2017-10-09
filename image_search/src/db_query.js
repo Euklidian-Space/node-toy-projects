@@ -20,7 +20,7 @@ function queryDb(req) {
   const { offset } = req.query;
   return ({ countProm, collection }) => {
     return countProm.then(count => {
-      let n = count > offset ? count - offset : count;    
+      let n = count > offset ? offset : count;    
       return collection.find(
         { $or: [{ order_id: n }, { order_id: {$lt: n} }] },
         { url: 1, snippet: 1, thumbnail: 1, context: 1}
