@@ -18,7 +18,7 @@ function getUrl(req) {
 			return col
 				.find(
 					{ _id: req.params.id },
-					{ url: 1 }
+					{ url: 1, _id: 0 }
         ).toArray().then(docs => {
           db.close();
           console.log("doc", docs);
@@ -55,38 +55,35 @@ function queryUrl(connection) {
           { url: req.params.url },
           { _id: 1, url: 1, tiny_url: 1 }
         ).toArray()
-        .then(doc => Promise.resolve({col, doc, db}));
-			// return Promise.resolve({col, doc, db});
+        .then(docs => Promise.resolve({col, docs, db}));
 		});
 	};
 }
 
 function parseQueryResponse(req) {
-	return ({ col, doc, db }) => {
-		if (doc[0]) {
+	return ({ col, docs, db }) => {
+		if (docs[0]) {
       console.log("closing db");
       db.close();
 			return Promise.resolve({
-			  url: doc[0].url,
-        tiny_url: doc[0].tiny_url
+			  url: docs[0].url,
+        tiny_url: docs[0].tiny_url
 			});
-		} else {
-			let id = shortID.generate();
-			let tiny_url = `http://${req.headers['host']}/${id}`;
-			let new_doc = {
-				url: req.params.url,
-				tiny_url,
-				_id: id
-      };
-      console.log("new doc", new_doc);
-			return col.insert(new_doc).then(data => {
-        let { ops } = data;
-        let { url, tiny_url } = ops[0];
-        console.log("closing db");
-        db.close();
-        return Promise.resolve({ url, tiny_url });
-      });
-		}
+		} 
+		let id = shortID.generate();
+		let tiny_url = `http://${req.headers['host']}/ret/${id}`;
+		let new_doc = {
+			url: req.params.url,
+			tiny_url,
+			_id: id
+     };
+		return col.insert(new_doc).then(data => {
+       let { ops } = data;
+       let { url, tiny_url } = ops[0];
+       console.log("closing db");
+       db.close();
+       return Promise.resolve({ url, tiny_url });
+     });
 	};
 }
 
