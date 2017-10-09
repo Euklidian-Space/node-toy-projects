@@ -18,9 +18,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/new/:url(*)", (req, res) => {
-	generateTinyURL(req)
-		.then(data => res.json(data))
-		.catch(err => res.send(console.log(err)));
+  generateTinyURL(req)
+    .then(data => res.json(data))
+    .catch(err => res.send(console.log(err)));
 });
 
 app.get("/ret/:id", (req, res) => {
