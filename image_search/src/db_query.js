@@ -35,3 +35,7 @@ function logErr(name, fn) {
     return Promise.reject(`Error: ${err}, in function ${name}`);
   };
 }
+
+module.exports = {
+  history
+};
