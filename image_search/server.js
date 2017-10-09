@@ -2,19 +2,33 @@
 const express = require('express');
 const app = express();
 const path = require('path');
-const GoogleImages = require('google-images');
+const { history, insert } = require("./src/db_query");
+const { search } = require("./src/api");
 
-const { API_KEY, search_id } = require("./config/keys");
-const { history } = require("./src/db_query");
-const client = new GoogleImages(search_id, API_KEY);
 
+app.get("/", (req, res) => {
+  let fileName = path.join(__dirname, "static/index.html");
+
+  res.sendFile(fileName, err => {
+    if (err) {
+      console.log(err);
+      res.status(err.status).end();
+    } else {
+      console.log("Sent:", fileName);
+    }
+  });
+});
 
 app.get("/imagesearch/:keywords", (req, res) => {
-
+  search(req).then(images => {
+    res.json(images);
+    return insert(req)
+      .then(new_doc => console.log(`history updated with: ${new_doc}`));
+  }, err => console.log(err));
 });
 
 app.get("/imagesearch/history", (req, res) => {
-  return history(req)
+  history(req)
     .then(docs => {
       res.json(docs);
     });

@@ -12,21 +12,43 @@ function countDocs() {
   return connection
     .then(db => Promise.resolve({
       countProm: db.collection("history").count(),
+      db,
       collection: db.collection("history")
     }));
 }
 
 function queryDb(req) {
   const { offset } = req.query;
-  return ({ countProm, collection }) => {
+  return ({ countProm, collection, db }) => {
     return countProm.then(count => {
       let n = count > offset ? offset : count;    
+      let epoch = (new Date()).getTime();
       return collection.find(
-        { $or: [{ order_id: n }, { order_id: {$lt: n} }] },
-        { url: 1, snippet: 1, thumbnail: 1, context: 1}
-      ).toArray();
+        { $or: [{ when: epoch }, { when: {$lt: epoch} }] },
+        { terms: 1, when: 1 }
+      ).toArray()
+      .then(docs => {
+        db.close();
+        return Promise.resolve(docs);
+      });
     });
   };
+}
+
+function insert(req) {
+  return connection
+    .then(db => {
+      let new_doc = {
+        terms: req.params.keywords,
+        when: (new Date()).getTime()
+      };
+      return db.collection("history")
+        .insert(new_doc)
+        .then(_data => {
+          db.close();
+          return Promise.resolve(new_doc);
+        });
+    });
 }
 
 function logErr(name, fn) {
@@ -37,5 +59,6 @@ function logErr(name, fn) {
 }
 
 module.exports = {
-  history
+  history,
+  insert
 };
