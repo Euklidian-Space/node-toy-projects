@@ -23,7 +23,8 @@ app.get("/imagesearch/:keywords", (req, res) => {
   search(req).then(images => {
     res.json(images);
     return insert(req)
-      .then(new_doc => console.log(`history updated with: ${new_doc}`));
+      .then(new_doc => console.log(`history updated with: ${new_doc}`))
+      .catch(err => console.log(err));
   }, err => console.log(err));
 });
 

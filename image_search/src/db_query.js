@@ -1,6 +1,11 @@
 const mongo = require('mongodb').MongoClient;
 const { mongoURI } = require("../config/keys");
-const connection = mongo.connect(mongoURI);
+const connection = mongo.connect(mongoURI, {
+  poolSize: 5,
+  autoReconnect: true,
+  keepAlive: 30000,
+  connectTimeoutMS: 30000
+});
 
 
 function history(req) {
@@ -36,6 +41,7 @@ function queryDb(req) {
 }
 
 function insert(req) {
+  console.log("connection", connection);
   return connection
     .then(db => {
       let new_doc = {
@@ -45,6 +51,7 @@ function insert(req) {
       return db.collection("history")
         .insert(new_doc)
         .then(_data => {
+          // console.log("closing db");
           db.close();
           return Promise.resolve(new_doc);
         });
