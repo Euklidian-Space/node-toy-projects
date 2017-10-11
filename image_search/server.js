@@ -28,7 +28,7 @@ app.get("/imagesearch/:keywords", (req, res) => {
   }, err => console.log(err));
 });
 
-app.get("/imagesearch/history", (req, res) => {
+app.get("/history", (req, res) => {
   history(req)
     .then(docs => {
       res.json(docs);
